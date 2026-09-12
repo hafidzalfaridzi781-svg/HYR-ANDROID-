@@ -1,1 +1,1258 @@
-https://injektorzyecitedz.vercel.app/
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#000000" />
+<meta name="description" content="HYR INJECTOR — Premium Android Tool" />
+<title>HYR INJECTOR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   HYR INJECTOR — STYLES
+   Tema: hitam, putih, abu-abu | Glassmorphism | Mobile-first
+   ============================================================ */
+
+:root {
+  --bg: #000000;
+  --panel: rgba(22, 22, 24, 0.55);
+  --panel-2: rgba(30, 30, 34, 0.55);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.55);
+  --text-faint: rgba(255, 255, 255, 0.30);
+  --danger: #ff5b5b;
+  --success: #57ffa8;
+  --warning: #ffb547;
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
+  --transition: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 45%),
+    radial-gradient(circle at 100% 100%, rgba(255,255,255,0.05) 0%, transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(255,255,255,0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============ APP SHELL ============ */
+#app {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: calc(20px + var(--safe-top)) 16px calc(32px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============ SPLASH SCREEN ============ */
+#splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  transition: opacity 0.6s var(--transition), visibility 0.6s;
+}
+#splash.hide { opacity: 0; visibility: hidden; }
+
+.splash-logo {
+  font-size: 64px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  color: #fff;
+  text-shadow:
+    0 0 30px rgba(255,255,255,0.4),
+    0 0 60px rgba(255,255,255,0.2);
+  animation: splashLogo 1.4s var(--transition) both;
+}
+@keyframes splashLogo {
+  0%   { opacity: 0; transform: scale(0.7); }
+  40%  { opacity: 1; transform: scale(1.05); }
+  70%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.splash-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5em;
+  color: rgba(255,255,255,0.75);
+  opacity: 0;
+  animation: splashTitle 1s var(--transition) 0.6s forwards;
+}
+@keyframes splashTitle {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.splash-loader {
+  width: 120px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+  margin-top: 16px;
+  opacity: 0;
+  animation: splashTitle 0.6s var(--transition) 1s forwards;
+}
+.splash-loader::after {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 40%;
+  background: #fff;
+  border-radius: 999px;
+  animation: splashBar 1.4s ease-in-out infinite;
+}
+@keyframes splashBar {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
+/* ============ VIEWS ============ */
+.view {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  animation: viewIn 0.45s var(--transition) both;
+}
+.view.active { display: flex; }
+
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.99); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes viewOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(-14px) scale(0.99); }
+}
+.view.leaving { animation: viewOut 0.3s var(--transition) both; }
+
+/* ============ LOGIN ============ */
+.login-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.brand {
+  text-align: center;
+  margin-bottom: 24px;
+  animation: brandIn 0.7s var(--transition) both;
+}
+@keyframes brandIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.brand-logo {
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 16px;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #1a1a1c, #060606);
+  border: 1px solid var(--border-strong);
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 26px;
+  letter-spacing: -1px;
+  color: #fff;
+  box-shadow:
+    0 0 40px rgba(255,255,255,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.12);
+  position: relative;
+}
+.brand-logo::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.18), transparent 45%);
+  pointer-events: none;
+}
+
+.brand-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  color: #fff;
+}
+.brand-sub {
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+
+.card {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 20px;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.field input {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  background: rgba(0,0,0,0.45);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.field input::placeholder { color: rgba(255,255,255,0.22); }
+.field input:focus {
+  border-color: var(--border-strong);
+  background: rgba(0,0,0,0.65);
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.05);
+}
+
+.btn {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s var(--transition), opacity 0.2s, box-shadow 0.2s, background 0.2s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.btn:active { transform: scale(0.975); }
+.btn[disabled] { opacity: 0.6; pointer-events: none; }
+
+.btn-primary {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 8px 30px rgba(255,255,255,0.14);
+}
+.btn-primary:active { box-shadow: 0 4px 18px rgba(255,255,255,0.10); }
+
+.btn-ghost {
+  background: rgba(255,255,255,0.05);
+  color: #ffffff;
+  border: 1px solid var(--border);
+}
+
+.btn-danger {
+  background: rgba(255,90,90,0.10);
+  color: #ff7b7b;
+  border: 1px solid rgba(255,90,90,0.25);
+}
+
+.btn .spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.25);
+  border-top-color: #000;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+.btn.loading .spinner { display: block; }
+.btn.loading .btn-label { display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* BUY KEY section */
+.buy-key {
+  margin-top: 22px;
+  text-align: center;
+}
+.buy-key-title {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+  text-shadow:
+    0 0 12px rgba(255,255,255,0.35),
+    0 0 28px rgba(255,255,255,0.15);
+}
+.buy-key-sub {
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: var(--text-faint);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Social icons */
+.socials {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 16px;
+}
+.social {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+}
+.social-btn {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 0 20px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.06);
+  transition: transform 0.15s var(--transition), box-shadow 0.25s, border-color 0.25s;
+}
+.social-btn svg { width: 24px; height: 24px; }
+.social:active .social-btn {
+  transform: scale(0.92);
+  border-color: var(--border-strong);
+  box-shadow: 0 0 30px rgba(255,255,255,0.14), inset 0 1px 0 rgba(255,255,255,0.10);
+}
+.social-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+/* ============ DASHBOARD ============ */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 4px 4px 0;
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.mini-logo {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #1a1a1c, #050505);
+  border: 1px solid var(--border-strong);
+  display: grid; place-items: center;
+  font-weight: 900; font-size: 13px; color: #fff;
+  letter-spacing: -0.5px;
+}
+.topbar h1 { font-size: 15px; font-weight: 800; letter-spacing: 0.18em; }
+.topbar .sub {
+  font-size: 10px;
+  color: var(--text-faint);
+  letter-spacing: 0.22em;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(87,255,168,0.08);
+  border: 1px solid rgba(87,255,168,0.20);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--success);
+}
+.status-chip .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+
+.user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.user-card .label {
+  font-size: 10px; letter-spacing: 0.2em; color: var(--text-faint); font-weight: 600;
+}
+.user-card .value {
+  font-size: 14px; font-weight: 700; color: #fff; margin-top: 3px; letter-spacing: 0.03em;
+  word-break: break-all;
+}
+.avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(145deg, #2a2a2e, #101012);
+  border: 1px solid var(--border-strong);
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 13px; color: #fff;
+  flex-shrink: 0;
+}
+
+/* Shizuku card */
+.shizuku-card {
+  padding: 14px 16px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.shizuku-card .label {
+  font-size: 10px; letter-spacing: 0.2em; color: var(--text-faint); font-weight: 600;
+}
+.shizuku-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin-top: 4px;
+  color: var(--warning);
+  transition: color 0.3s;
+}
+.shizuku-status .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+.shizuku-status.connected { color: var(--success); }
+.shizuku-status.not-connected { color: var(--danger); }
+.shizuku-status.not-installed { color: var(--text-dim); }
+
+.shizuku-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+
+.section-label {
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  color: var(--text-faint);
+  font-weight: 700;
+  margin: 4px 4px 10px;
+  text-transform: uppercase;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: border-color 0.25s var(--transition), transform 0.15s var(--transition), box-shadow 0.25s;
+  cursor: pointer;
+}
+.feature:active { transform: scale(0.995); }
+.feature.on {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 8px 24px rgba(255,255,255,0.04);
+}
+
+.feature-info { display: flex; flex-direction: column; gap: 4px; }
+.feature-name {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #fff;
+}
+.feature-state {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  font-weight: 600;
+  color: var(--text-faint);
+  transition: color 0.25s;
+}
+.feature.on .feature-state { color: var(--success); }
+
+.toggle {
+  position: relative;
+  width: 54px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.3s var(--transition), border-color 0.3s;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #6a6a6a;
+  transition: transform 0.32s var(--transition), background 0.3s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+.toggle.on { background: #ffffff; border-color: #ffffff; }
+.toggle.on::after { transform: translateX(24px); background: #000000; }
+
+.channel {
+  margin-top: 20px;
+  padding: 18px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.channel-head {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+}
+.channel-icon {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  background: rgba(37, 211, 102, 0.10);
+  border: 1px solid rgba(37, 211, 102, 0.25);
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.channel-icon svg { width: 22px; height: 22px; }
+.channel-title { font-size: 14px; font-weight: 800; letter-spacing: 0.14em; }
+.channel-desc { font-size: 11px; color: var(--text-dim); margin-top: 3px; line-height: 1.5; }
+.btn-wa {
+  background: linear-gradient(145deg, #25d366, #128c4a);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.18);
+}
+
+.logout-wrap { margin-top: 16px; }
+
+.footer {
+  margin-top: auto;
+  padding-top: 28px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+/* Toast */
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(30px + var(--safe-bottom));
+  transform: translate(-50%, 30px);
+  background: rgba(20, 20, 22, 0.95);
+  border: 1px solid var(--border-strong);
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s var(--transition);
+  z-index: 9998;
+  max-width: 90vw;
+  text-align: center;
+  line-height: 1.4;
+}
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+#toast.error { border-color: rgba(255,90,90,0.45); color: #ff9b9b; }
+#toast.success { border-color: rgba(87,255,168,0.45); color: #9dffce; }
+
+/* Dialog */
+#dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9990;
+  padding: 20px;
+  animation: fadeIn 0.3s var(--transition);
+}
+#dialog-backdrop.show { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.dialog {
+  width: 100%;
+  max-width: 380px;
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 22px 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-lg);
+  animation: dialogIn 0.35s var(--transition);
+}
+@keyframes dialogIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.dialog-icon {
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  background: rgba(255,181,71,0.08);
+  border: 1px solid rgba(255,181,71,0.25);
+  display: grid; place-items: center;
+  margin: 0 auto 14px;
+}
+.dialog-title {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-align: center;
+  color: #fff;
+}
+.dialog-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+.dialog-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Responsive */
+@media (max-width: 360px) {
+  #app { padding: calc(16px + var(--safe-top)) 12px calc(24px + var(--safe-bottom)); }
+  .brand-logo { width: 72px; height: 72px; font-size: 22px; }
+  .brand-title { font-size: 19px; }
+  .feature-name { font-size: 13px; }
+  .social-btn { width: 48px; height: 48px; }
+  .social-btn svg { width: 21px; height: 21px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">HYR</div>
+  <div class="splash-title">HYR INJECTOR</div>
+  <div class="splash-loader"></div>
+</div>
+
+<div id="app">
+
+  <!-- LOGIN -->
+  <section class="view active" id="view-login">
+    <div class="login-wrap">
+
+      <div class="brand">
+        <div class="brand-logo">HYR</div>
+        <div class="brand-title">HYR INJECTOR</div>
+        <div class="brand-sub">PREMIUM ANDROID TOOL</div>
+      </div>
+
+      <form class="card" id="login-form" autocomplete="off" novalidate>
+        <div class="field">
+          <label for="login-user">Username</label>
+          <input id="login-user" name="username" type="text" inputmode="text"
+                 autocapitalize="none" autocorrect="off" spellcheck="false"
+                 placeholder="Masukkan username" required />
+        </div>
+
+        <div class="field">
+          <label for="login-pass">Password</label>
+          <input id="login-pass" name="password" type="password"
+                 placeholder="Masukkan password" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="btn-login">
+          <span class="spinner"></span>
+          <span class="btn-label">LOGIN</span>
+        </button>
+      </form>
+
+      <div class="buy-key">
+        <div class="buy-key-title">BUY KEY HUBUNGI</div>
+        <div class="buy-key-sub">Contact Developer</div>
+
+        <div class="socials">
+          <a class="social" href="https://wa.me/628817789861" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+            <span class="social-btn">
+              <svg viewBox="0 0 24 24" fill="#25d366" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.05 4.91A10.4 10.4 0 0 0 12 2a10 10 0 0 0-8.55 15.13L2 22l5.03-1.4A10 10 0 0 0 12 22a10 10 0 0 0 7.05-17.09ZM12 20a8 8 0 0 1-4.1-1.13l-.29-.17-3 .84.8-2.92-.19-.3A8 8 0 1 1 12 20Zm4.55-5.9c-.25-.13-1.48-.73-1.71-.81-.23-.08-.4-.13-.56.13-.17.25-.65.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.05-.39-2-1.23a7.5 7.5 0 0 1-1.39-1.72c-.14-.25 0-.38.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.44-.06-.13-.56-1.36-.77-1.86-.2-.48-.41-.42-.56-.42h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.44 1.03 2.6c.13.17 1.77 2.7 4.28 3.79.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.48-.6 1.69-1.19.21-.58.21-1.08.15-1.19-.06-.1-.23-.17-.48-.29Z"/>
+              </svg>
+            </span>
+            <span class="social-label">WhatsApp</span>
+          </a>
+
+          <a class="social" href="https://tiktok.com/@bang_zye1" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <span class="social-btn">
+              <svg viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.5 3a4.5 4.5 0 0 0 4.5 4.5v3a7.5 7.5 0 0 1-4.5-1.5v6.75A6.25 6.25 0 1 1 10.25 9.5c.26 0 .51.02.75.05v3.1a3.2 3.2 0 1 0 2.5 3.1V3h3z"/>
+              </svg>
+            </span>
+            <span class="social-label">TikTok</span>
+          </a>
+
+          <a class="social" href="https://t.me/KAIZYE_STORE" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+            <span class="social-btn">
+              <svg viewBox="0 0 24 24" fill="#29b6f6" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.78 18.65a1.4 1.4 0 0 1-.4-.02l.04-2.91 8.6-7.78c.14-.13-.03-.19-.22-.08L7.15 13.1 3.9 12.1c-.7-.22-.72-.7.15-1.03l16-6.17c.58-.22 1.1.13.9 1.03l-2.72 12.8c-.19.86-.7 1.07-1.4.67l-3.86-2.85-1.86 1.8c-.2.2-.38.37-.75.37z"/>
+              </svg>
+            </span>
+            <span class="social-label">Telegram</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer">©ZyeCitedz</div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section class="view" id="view-dashboard">
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="mini-logo">HYR</div>
+        <div>
+          <h1>HYR INJECTOR</h1>
+          <div class="sub">CONTROL PANEL</div>
+        </div>
+      </div>
+      <div class="status-chip">
+        <span class="dot"></span>
+        CONNECTED
+      </div>
+    </header>
+
+    <div class="user-card">
+      <div>
+        <div class="label">LOGGED IN AS</div>
+        <div class="value" id="user-name">—</div>
+      </div>
+      <div class="avatar" id="user-avatar">?</div>
+    </div>
+
+    <div class="shizuku-card">
+      <div>
+        <div class="label">SHIZUKU STATUS</div>
+        <div class="shizuku-status" id="shizuku-status">
+          <span class="dot"></span>
+          CHECKING...
+        </div>
+      </div>
+      <div class="shizuku-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="section-label">Fitur</div>
+
+    <div class="feature" data-feature="BODY HS">
+      <div class="feature-info">
+        <div class="feature-name">BODY HS</div>
+        <div class="feature-state">STATUS: OFF</div>
+      </div>
+      <div class="toggle" role="switch" aria-checked="false" tabindex="0" data-toggle></div>
+    </div>
+
+    <div class="feature" data-feature="AIMLOCK">
+      <div class="feature-info">
+        <div class="feature-name">AIMLOCK</div>
+        <div class="feature-state">STATUS: OFF</div>
+      </div>
+      <div class="toggle" role="switch" aria-checked="false" tabindex="0" data-toggle></div>
+    </div>
+
+    <div class="feature" data-feature="BODYLOCK">
+      <div class="feature-info">
+        <div class="feature-name">BODYLOCK</div>
+        <div class="feature-state">STATUS: OFF</div>
+      </div>
+      <div class="toggle" role="switch" aria-checked="false" tabindex="0" data-toggle></div>
+    </div>
+
+    <div class="channel">
+      <div class="channel-head">
+        <div class="channel-icon">
+          <svg viewBox="0 0 24 24" fill="#25d366" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19.05 4.91A10.4 10.4 0 0 0 12 2a10 10 0 0 0-8.55 15.13L2 22l5.03-1.4A10 10 0 0 0 12 22a10 10 0 0 0 7.05-17.09ZM12 20a8 8 0 0 1-4.1-1.13l-.29-.17-3 .84.8-2.92-.19-.3A8 8 0 1 1 12 20Zm4.55-5.9c-.25-.13-1.48-.73-1.71-.81-.23-.08-.4-.13-.56.13-.17.25-.65.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.05-.39-2-1.23a7.5 7.5 0 0 1-1.39-1.72c-.14-.25 0-.38.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.44-.06-.13-.56-1.36-.77-1.86-.2-.48-.41-.42-.56-.42h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.44 1.03 2.6c.13.17 1.77 2.7 4.28 3.79.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.48-.6 1.69-1.19.21-.58.21-1.08.15-1.19-.06-.1-.23-.17-.48-.29Z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="channel-title">CHANNEL UPDATE</div>
+          <div class="channel-desc">Dapatkan informasi dan update terbaru dari channel resmi.</div>
+        </div>
+      </div>
+      <button class="btn btn-wa" id="btn-channel" type="button">
+        <span class="btn-label">JOIN WHATSAPP CHANNEL</span>
+      </button>
+    </div>
+
+    <div class="logout-wrap">
+      <button class="btn btn-danger" id="btn-logout" type="button">
+        <span class="btn-label">LOGOUT</span>
+      </button>
+    </div>
+
+    <div class="footer">©ZyeCitedz</div>
+  </section>
+
+</div>
+
+<!-- DIALOG SHIZUKU -->
+<div id="dialog-backdrop">
+  <div class="dialog">
+    <div class="dialog-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffb547" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/>
+        <path d="M12 8v4"/>
+        <path d="M12 16h.01"/>
+      </svg>
+    </div>
+    <div class="dialog-title">AKSES SHIZUKU DIPERLUKAN</div>
+    <div class="dialog-desc">HYR membutuhkan layanan Shizuku untuk fitur Android yang didukung.</div>
+    <div class="dialog-actions">
+      <button class="btn btn-ghost" id="btn-recheck" type="button">
+        <span class="btn-label">CEK ULANG</span>
+      </button>
+      <button class="btn btn-primary" id="btn-grant" type="button">
+        <span class="btn-label">IZINKAN</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   HYR INJECTOR — CLIENT SCRIPT
+   ------------------------------------------------------------
+   ⚠️  PROTOTYPE FRONTEND
+
+   - Login & one-device di file ini = DEMO (tidak aman untuk produksi)
+   - Password plaintext di client hanya untuk demo
+   - Untuk produksi: pindahkan SEMUA auth & device binding ke backend
+
+   Shizuku: browser tidak bisa akses langsung. Di Android WebView,
+   JS memanggil window.AndroidBridge.getShizukuStatus() — bridge
+   native yang berkomunikasi dengan Shizuku API resmi.
+
+   BODY HS / AIMLOCK / BODYLOCK = UI SIMULATOR.
+   Tidak ada injeksi, memory modification, atau interaksi ke game.
+   ============================================================ */
+
+(() => {
+  'use strict';
+
+  /* Akun demo (PINDAHKAN ke backend untuk produksi) */
+  const ACCOUNTS = [
+    { u: 'VIP-BY-ZYE',      p: 'HYRINJECT'    },
+    { u: 'ZYE-INJECT',      p: 'ZYEHYPER'     },
+    { u: 'KAIZYE-INJECT',   p: 'ZYESETTINGS'  },
+    { u: 'ZYE-CITER',       p: 'ZYECITEDZ'    },
+    { u: 'GACOR-BY-ZYE',    p: 'INJECTZYE'    },
+    { u: 'ZYE-VIP-INJECT',  p: 'VIPINJECTZYE' }
+  ];
+
+  const CHANNEL_URL = 'https://whatsapp.com/channel/0029VbCdJuNDZ4LT4arD1H3v';
+  const SESSION_KEY = 'hyr_session';
+  const BIND_PREFIX = 'hyr_bind_';
+
+  /* DOM refs */
+  const splash         = document.getElementById('splash');
+  const viewLogin      = document.getElementById('view-login');
+  const viewDashboard  = document.getElementById('view-dashboard');
+  const loginForm      = document.getElementById('login-form');
+  const inputUser      = document.getElementById('login-user');
+  const inputPass      = document.getElementById('login-pass');
+  const btnLogin       = document.getElementById('btn-login');
+  const userNameEl     = document.getElementById('user-name');
+  const userAvatarEl   = document.getElementById('user-avatar');
+  const btnChannel     = document.getElementById('btn-channel');
+  const btnLogout      = document.getElementById('btn-logout');
+  const toastEl        = document.getElementById('toast');
+  const dialogBackdrop = document.getElementById('dialog-backdrop');
+  const shizukuStatus  = document.getElementById('shizuku-status');
+  const btnRecheck     = document.getElementById('btn-recheck');
+  const btnGrant       = document.getElementById('btn-grant');
+
+  /* Splash hide */
+  window.addEventListener('load', () => {
+    setTimeout(() => splash.classList.add('hide'), 1800);
+  });
+
+  /* Toast */
+  let toastTimer = null;
+  function toast(msg, type = 'default') {
+    toastEl.textContent = msg;
+    toastEl.classList.remove('error', 'success');
+    if (type === 'error') toastEl.classList.add('error');
+    if (type === 'success') toastEl.classList.add('success');
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2600);
+  }
+
+  /* View switching */
+  function showView(target) {
+    const current = document.querySelector('.view.active');
+    if (current === target) return;
+    if (current) {
+      current.classList.add('leaving');
+      setTimeout(() => {
+        current.classList.remove('active', 'leaving');
+        target.classList.add('active');
+        window.scrollTo(0, 0);
+      }, 260);
+    } else {
+      target.classList.add('active');
+    }
+  }
+
+  /* Device fingerprint (DEMO ONLY) */
+  function getDeviceFingerprint() {
+    try {
+      const data = [
+        navigator.userAgent || '',
+        navigator.language || '',
+        (screen.width || 0) + 'x' + (screen.height || 0),
+        screen.colorDepth || 0,
+        new Date().getTimezoneOffset(),
+        navigator.hardwareConcurrency || 0,
+        navigator.platform || ''
+      ].join('|');
+      let h = 0;
+      for (let i = 0; i < data.length; i++) h = (h * 31 + data.charCodeAt(i)) | 0;
+      return 'dev_' + Math.abs(h).toString(36);
+    } catch (_) { return 'dev_unknown'; }
+  }
+
+  /* Simulasi login — GANTI dengan fetch ke backend di produksi */
+  async function fakeLoginRequest(username, password) {
+    await new Promise(r => setTimeout(r, 900));
+    const acc = ACCOUNTS.find(a => a.u === username && a.p === password);
+    if (!acc) return { ok: false, code: 'INVALID_CREDENTIALS' };
+
+    const deviceId = getDeviceFingerprint();
+    const bindKey  = BIND_PREFIX + acc.u;
+    let bound = null;
+    try { bound = localStorage.getItem(bindKey); } catch (_) {}
+
+    if (!bound) {
+      try { localStorage.setItem(bindKey, deviceId); } catch (_) {}
+      return { ok: true, user: acc.u, token: 'demo_' + Date.now() };
+    }
+    if (bound !== deviceId) return { ok: false, code: 'DEVICE_MISMATCH' };
+    return { ok: true, user: acc.u, token: 'demo_' + Date.now() };
+  }
+
+  /* Session helpers */
+  function saveSession(data) {
+    try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(data)); } catch (_) {}
+  }
+  function loadSession() {
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (_) { return null; }
+  }
+  function clearSession() {
+    try { sessionStorage.removeItem(SESSION_KEY); } catch (_) {}
+  }
+
+  /* Login */
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (btnLogin.classList.contains('loading')) return;
+
+    const username = inputUser.value.trim();
+    const password = inputPass.value;
+
+    if (!username || !password) {
+      toast('USERNAME ATAU PASSWORD SALAH', 'error');
+      return;
+    }
+
+    btnLogin.classList.add('loading');
+    btnLogin.disabled = true;
+
+    try {
+      const res = await fakeLoginRequest(username, password);
+
+      if (!res.ok) {
+        if (res.code === 'DEVICE_MISMATCH') {
+          toast('IP TIDAK SESUAI — Perangkat tidak terdaftar.', 'error');
+        } else if (res.code === 'SERVER_DOWN') {
+          toast('SERVER TIDAK TERSEDIA', 'error');
+        } else {
+          toast('USERNAME ATAU PASSWORD SALAH', 'error');
+        }
+        inputPass.value = '';
+        return;
+      }
+
+      saveSession({ user: res.user, token: res.token, ts: Date.now() });
+      enterDashboard(res.user);
+      inputUser.value = '';
+      inputPass.value = '';
+      toast('LOGIN BERHASIL', 'success');
+    } catch (err) {
+      toast('SERVER TIDAK TERSEDIA', 'error');
+    } finally {
+      btnLogin.classList.remove('loading');
+      btnLogin.disabled = false;
+    }
+  });
+
+  /* Dashboard */
+  function enterDashboard(username) {
+    userNameEl.textContent = username;
+    userAvatarEl.textContent = username.charAt(0).toUpperCase();
+    resetAllToggles();
+    showView(viewDashboard);
+    setTimeout(checkShizuku, 400);
+  }
+
+  function resetAllToggles() {
+    document.querySelectorAll('.feature').forEach(f => {
+      f.classList.remove('on');
+      const t = f.querySelector('[data-toggle]');
+      if (t) { t.classList.remove('on'); t.setAttribute('aria-checked', 'false'); }
+      const s = f.querySelector('.feature-state');
+      if (s) s.textContent = 'STATUS: OFF';
+    });
+  }
+
+  /* Toggles */
+  document.querySelectorAll('.feature').forEach(feature => {
+    const toggle = feature.querySelector('[data-toggle]');
+    const state  = feature.querySelector('.feature-state');
+    const name   = feature.getAttribute('data-feature');
+
+    const activate = () => {
+      const isOn = toggle.classList.toggle('on');
+      toggle.setAttribute('aria-checked', isOn ? 'true' : 'false');
+      feature.classList.toggle('on', isOn);
+      state.textContent = 'STATUS: ' + (isOn ? 'ACTIVE' : 'OFF');
+      toast(name + ' ' + (isOn ? 'ACTIVATED' : 'DEACTIVATED'), isOn ? 'success' : 'default');
+    };
+
+    toggle.addEventListener('click', (e) => { e.stopPropagation(); activate(); });
+    toggle.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); activate(); }
+    });
+    feature.addEventListener('click', (e) => {
+      if (e.target === feature || e.target.classList.contains('feature-info')) activate();
+    });
+  });
+
+  /* ============================================================
+     SHIZUKU BRIDGE
+     Di Android WebView, bridge native harus expose:
+       AndroidBridge.getShizukuStatus() → "CONNECTED" | "NOT_CONNECTED" | "NOT_INSTALLED"
+       AndroidBridge.requestShizukuPermission()
+       AndroidBridge.openUrl(url)
+     Di browser biasa, bridge tidak ada → fallback simulasi.
+     ============================================================ */
+  const AndroidBridge = window.AndroidBridge || null;
+
+  function setShizukuStatus(kind) {
+    shizukuStatus.classList.remove('connected', 'not-connected', 'not-installed');
+    const textNode = shizukuStatus.lastChild;
+
+    if (kind === 'CONNECTED') {
+      shizukuStatus.classList.add('connected');
+      textNode.textContent = ' SHIZUKU CONNECTED';
+    } else if (kind === 'NOT_INSTALLED') {
+      shizukuStatus.classList.add('not-installed');
+      textNode.textContent = ' SHIZUKU NOT INSTALLED';
+    } else if (kind === 'NOT_CONNECTED') {
+      shizukuStatus.classList.add('not-connected');
+      textNode.textContent = ' SHIZUKU NOT CONNECTED';
+    } else {
+      textNode.textContent = ' CHECKING...';
+    }
+  }
+
+  function checkShizuku() {
+    setShizukuStatus('CHECKING');
+
+    if (AndroidBridge && typeof AndroidBridge.getShizukuStatus === 'function') {
+      try {
+        const status = AndroidBridge.getShizukuStatus();
+        setShizukuStatus(status);
+        if (status === 'CONNECTED') hideDialog();
+        else if (status === 'NOT_INSTALLED') {
+          toast('SHIZUKU TIDAK TERPASANG', 'error');
+          showDialog();
+        } else {
+          toast('SHIZUKU BELUM TERHUBUNG', 'error');
+          showDialog();
+        }
+      } catch (_) {
+        setShizukuStatus('NOT_CONNECTED');
+        showDialog();
+      }
+    } else {
+      // Browser biasa — simulasi
+      setTimeout(() => {
+        setShizukuStatus('NOT_CONNECTED');
+        showDialog();
+      }, 900);
+    }
+  }
+
+  function showDialog() { dialogBackdrop.classList.add('show'); }
+  function hideDialog() { dialogBackdrop.classList.remove('show'); }
+
+  btnRecheck.addEventListener('click', () => {
+    hideDialog();
+    toast('Mengecek ulang Shizuku...');
+    setTimeout(checkShizuku, 400);
+  });
+
+  btnGrant.addEventListener('click', () => {
+    if (AndroidBridge && typeof AndroidBridge.requestShizukuPermission === 'function') {
+      try {
+        AndroidBridge.requestShizukuPermission();
+        toast('Membuka pengaturan Shizuku...');
+        hideDialog();
+      } catch (_) {
+        toast('Gagal membuka Shizuku', 'error');
+      }
+    } else {
+      toast('Buka aplikasi Shizuku & izinkan HYR');
+      hideDialog();
+    }
+  });
+
+  /* Channel WhatsApp */
+  btnChannel.addEventListener('click', () => {
+    if (AndroidBridge && typeof AndroidBridge.openUrl === 'function') {
+      try { AndroidBridge.openUrl(CHANNEL_URL); return; } catch (_) {}
+    }
+    try { window.open(CHANNEL_URL, '_blank', 'noopener,noreferrer'); }
+    catch (_) { location.href = CHANNEL_URL; }
+  });
+
+  /* Social links — Android intent */
+  document.querySelectorAll('a.social').forEach(a => {
+    a.addEventListener('click', (e) => {
+      if (AndroidBridge && typeof AndroidBridge.openUrl === 'function') {
+        e.preventDefault();
+        try { AndroidBridge.openUrl(a.href); } catch (_) {}
+      }
+    });
+  });
+
+  /* Logout */
+  btnLogout.addEventListener('click', () => {
+    clearSession();
+    resetAllToggles();
+    setShizukuStatus('CHECKING');
+    hideDialog();
+    userNameEl.textContent = '—';
+    userAvatarEl.textContent = '?';
+    showView(viewLogin);
+    toast('LOGOUT BERHASIL', 'success');
+  });
+
+  /* Auto-resume session */
+  window.addEventListener('DOMContentLoaded', () => {
+    const s = loadSession();
+    if (s && s.user) enterDashboard(s.user);
+  });
+
+})();
+</script>
+</body>
+</html>
