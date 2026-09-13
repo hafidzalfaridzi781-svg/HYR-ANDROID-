@@ -54,10 +54,14 @@ class AndroidBridge(private val activity: AppCompatActivity) {
         }
     }
 
-    /* ================= LAUNCH FF MAX ================= */
-
+    /* ============================================================
+       LAUNCH FREE FIRE MAX
+       Cara: Intent eksplisit ke FFMainActivity
+       Return: "INTENT_OK" | "NOT_INSTALLED" | "FAILED"
+       ============================================================ */
     @JavascriptInterface
     fun launchFFMax(): String {
+        // Cek game terinstall
         val installed = try {
             activity.packageManager.getPackageInfo(FFMAX_PKG, 0)
             true
@@ -65,17 +69,17 @@ class AndroidBridge(private val activity: AppCompatActivity) {
 
         if (!installed) return "NOT_INSTALLED"
 
+        // Cara 1: Intent eksplisit ke FFMainActivity
         try {
-            if (Shizuku.pingBinder() &&
-                Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED
-            ) {
-                val cmd = "am start -n $FFMAX_PKG/$FFMAX_ACT"
-                val proc = Shizuku.newProcess(arrayOf("sh", "-c", cmd), null, null)
-                proc.waitFor()
-                return "SHIZUKU_OK"
+            val intent = Intent().apply {
+                setClassName(FFMAX_PKG, FFMAX_ACT)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
+            activity.startActivity(intent)
+            return "INTENT_OK"
         } catch (_: Throwable) {}
 
+        // Cara 2: Fallback ke launcher intent
         try {
             val intent = activity.packageManager.getLaunchIntentForPackage(FFMAX_PKG)
             if (intent != null) {
@@ -89,7 +93,7 @@ class AndroidBridge(private val activity: AppCompatActivity) {
     }
 
     /* ============================================================
-       IZIN OVERLAY (Tampil di atas aplikasi lain)
+       IZIN OVERLAY
        ============================================================ */
 
     @JavascriptInterface
@@ -114,9 +118,6 @@ class AndroidBridge(private val activity: AppCompatActivity) {
 
     /* ============================================================
        FLOATING WINDOW
-       updateFloatingWindow("AIMLOCK,BODY HS")
-       updateFloatingWindow("")  → sembunyikan
-       Return: true kalau berhasil, false kalau izin kurang
        ============================================================ */
 
     @JavascriptInterface
@@ -141,7 +142,7 @@ class AndroidBridge(private val activity: AppCompatActivity) {
         return FloatingWindowService.getFeatures().joinToString(",")
     }
 
-    /* ================= Info perangkat ================= */
+    /* ================= Info ================= */
 
     @JavascriptInterface
     fun getSdkInt(): Int = Build.VERSION.SDK_INT
