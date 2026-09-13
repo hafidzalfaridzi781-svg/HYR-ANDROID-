@@ -48,6 +48,17 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .view.active{display:flex}
 @keyframes viewIn{from{opacity:0;transform:translateY(14px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
 
+/* OVERLAY PERMISSION BANNER */
+#overlay-banner{display:none;background:rgba(255,181,71,.08);border:1px solid rgba(255,181,71,.3);
+  border-radius:14px;padding:12px 14px;margin-bottom:14px;
+  display:none;align-items:center;gap:10px}
+#overlay-banner.show{display:flex}
+#overlay-banner .icon{font-size:18px}
+#overlay-banner .text{flex:1;font-size:11px;color:#ffb547;line-height:1.4;font-weight:600}
+#overlay-banner button{background:#fff;color:#000;border:none;font-weight:800;font-size:10px;
+  letter-spacing:.14em;padding:6px 10px;border-radius:999px;cursor:pointer;font-family:inherit}
+
+/* MAINTENANCE */
 .maintenance-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:20px}
 .maintenance-icon{font-size:64px;margin-bottom:20px;opacity:.9}
 .maintenance-title{font-size:20px;font-weight:900;letter-spacing:.18em;color:#fff;line-height:1.4}
@@ -177,16 +188,23 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .channel-title{font-size:14px;font-weight:800;letter-spacing:.14em}
 .channel-desc{font-size:11px;color:var(--text-dim);margin-top:3px;line-height:1.5}
 .btn-wa{background:linear-gradient(145deg,#25d366,#128c4a);color:#fff;box-shadow:0 8px 24px rgba(37,211,102,.18)}
-.game-launcher{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;margin-bottom:16px}
-.game-card{padding:16px 12px;background:var(--panel-2);border:1px solid var(--border);
-  border-radius:var(--radius-md);text-align:center;cursor:pointer;
-  transition:transform .15s var(--transition),border-color .25s}
-.game-card:active{transform:scale(.97);border-color:var(--border-strong)}
-.game-icon{width:56px;height:56px;margin:0 auto 10px;border-radius:14px;
-  background:linear-gradient(145deg,#1a1a1c,#050505);border:1px solid var(--border-strong);
-  display:grid;place-items:center;font-weight:900;font-size:11px;color:#fff;line-height:1.1}
-.game-name{font-size:11px;font-weight:800;letter-spacing:.14em;color:#fff}
-.game-status{font-size:9px;color:var(--text-faint);letter-spacing:.18em;margin-top:3px;font-weight:600}
+
+.game-launcher-single{margin-top:4px;margin-bottom:16px}
+.game-card-single{display:flex;align-items:center;gap:14px;padding:14px 16px;
+  background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius-md);
+  cursor:pointer;transition:transform .15s var(--transition),border-color .25s,box-shadow .25s}
+.game-card-single:active{transform:scale(.98);border-color:var(--border-strong);
+  box-shadow:0 8px 24px rgba(255,255,255,.04)}
+.game-icon-img{width:56px;height:56px;border-radius:14px;flex-shrink:0;
+  object-fit:cover;border:1px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.game-card-info{flex:1;display:flex;flex-direction:column;gap:3px}
+.game-card-info .game-name{font-size:14px;font-weight:800;letter-spacing:.14em;color:#fff}
+.game-card-info .game-status{font-size:10px;color:var(--text-faint);letter-spacing:.18em;font-weight:600}
+.game-card-single.active .game-status{color:var(--success)}
+.launch-badge{padding:8px 14px;background:#fff;color:#000;font-size:10px;font-weight:800;
+  letter-spacing:.16em;border-radius:999px;flex-shrink:0;
+  box-shadow:0 4px 16px rgba(255,255,255,.14)}
+
 .logout-wrap{margin-top:16px}
 .footer{margin-top:auto;padding-top:28px;text-align:center;font-size:11px;
   color:var(--text-faint);letter-spacing:.08em;font-weight:500}
@@ -223,7 +241,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   #app{padding:calc(16px + var(--safe-top)) 12px calc(24px + var(--safe-bottom))}
   .brand-logo{width:72px;height:72px;font-size:22px}
   .social-btn{width:48px;height:48px}
-  .game-icon{width:48px;height:48px;font-size:10px}
 }
 </style>
 </head>
@@ -332,6 +349,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <div class="status-chip" id="status-chip"><span class="dot"></span>CONNECTED</div>
     </header>
 
+    <!-- Banner izin overlay -->
+    <div id="overlay-banner">
+      <span class="icon">⚠️</span>
+      <span class="text">Izin "Tampil di atas aplikasi lain" diperlukan untuk jendela mengambang.</span>
+      <button id="btn-grant-overlay">IZINKAN</button>
+    </div>
+
     <div class="user-card">
       <div>
         <div class="label">LOGGED IN AS</div>
@@ -401,16 +425,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
 
     <div class="section-label" style="margin-top:24px;">Game Access</div>
-    <div class="game-launcher">
-      <div class="game-card" data-game="com.dts.freefireth">
-        <div class="game-icon">FF</div>
-        <div class="game-name">FREE FIRE</div>
-        <div class="game-status">TAP TO OPEN</div>
-      </div>
-      <div class="game-card" data-game="com.dts.freefiremax">
-        <div class="game-icon">FF<br/>MAX</div>
-        <div class="game-name">FREE FIRE MAX</div>
-        <div class="game-status">TAP TO OPEN</div>
+    <div class="game-launcher-single">
+      <div class="game-card-single" id="btn-launch-ffmax">
+        <img src="ffmax.png" class="game-icon-img" alt="Free Fire MAX" onerror="this.style.display='none'" />
+        <div class="game-card-info">
+          <div class="game-name">FREE FIRE MAX</div>
+          <div class="game-status" id="ffmax-status">TAP TO OPEN</div>
+        </div>
+        <div class="launch-badge">LAUNCH</div>
       </div>
     </div>
 
@@ -477,6 +499,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   const modeUser = $('mode-user');
   const modeKey = $('mode-key');
   const hologramSub = $('hologram-sub');
+  const overlayBanner = $('overlay-banner');
+  const btnGrantOverlay = $('btn-grant-overlay');
+
+  const AndroidBridge = window.AndroidBridge || null;
 
   let currentUser = { username: '', role: 'FREE' };
   let currentMode = 'user';
@@ -625,7 +651,52 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     statusChip.innerHTML = user.role === 'VIP' ? '<span class="dot"></span>VIP' : '<span class="dot"></span>CONNECTED';
     resetAllToggles();
     showView(viewDashboard);
+    checkOverlayPermission();
     setTimeout(checkShizuku, 400);
+  }
+
+  /* ========== OVERLAY PERMISSION ========== */
+  function checkOverlayPermission() {
+    if (!AndroidBridge || typeof AndroidBridge.hasOverlayPermission !== 'function') {
+      overlayBanner.classList.remove('show');
+      return;
+    }
+    const granted = AndroidBridge.hasOverlayPermission();
+    overlayBanner.classList.toggle('show', !granted);
+  }
+
+  btnGrantOverlay.addEventListener('click', () => {
+    if (AndroidBridge && typeof AndroidBridge.requestOverlayPermission === 'function') {
+      AndroidBridge.requestOverlayPermission();
+    }
+  });
+
+  window.onOverlayPermissionChange = function (granted) {
+    overlayBanner.classList.toggle('show', !granted);
+    if (granted) toast('IZIN DIBERIKAN', 'success');
+  };
+
+  /* ========== FLOATING WINDOW SYNC ========== */
+  function syncFloatingWindow() {
+    if (!AndroidBridge || typeof AndroidBridge.updateFloatingWindow !== 'function') return;
+
+    const active = [];
+    document.querySelectorAll('.feature.on').forEach(f => {
+      const name = f.dataset.feature;
+      if (name === 'HOLOGRAM') {
+        document.querySelectorAll('.sub-feature.on').forEach(sf => active.push(sf.dataset.subfeature));
+      } else {
+        active.push(name);
+      }
+    });
+
+    const ok = AndroidBridge.updateFloatingWindow(active.join(','));
+    if (!ok && active.length > 0) {
+      toast('IZIN TAMPIL DI ATAS APLIKASI DIBUTUHKAN', 'error');
+      if (typeof AndroidBridge.requestOverlayPermission === 'function') {
+        AndroidBridge.requestOverlayPermission();
+      }
+    }
   }
 
   function resetAllToggles() {
@@ -639,6 +710,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       const s = sf.querySelector('.state'); if (s) s.textContent = 'STATUS: OFF';
     });
     hologramSub.style.display = 'none';
+    syncFloatingWindow();
   }
 
   document.querySelectorAll('.feature').forEach(feature => {
@@ -654,6 +726,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       state.textContent = 'STATUS: ' + (isOn ? 'ACTIVE' : 'OFF');
       if (name === 'HOLOGRAM') hologramSub.style.display = isOn ? 'flex' : 'none';
       toast(name + ' ' + (isOn ? 'ACTIVATED' : 'DEACTIVATED'), isOn ? 'success' : 'default');
+      syncFloatingWindow();
     });
   });
 
@@ -665,11 +738,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       const isOn = sf.classList.toggle('on');
       sf.querySelector('.state').textContent = 'STATUS: ' + (isOn ? 'ACTIVE' : 'OFF');
       toast(name + ' ' + (isOn ? 'ACTIVATED' : 'DEACTIVATED'), isOn ? 'success' : 'default');
+      syncFloatingWindow();
     });
   });
 
-  const AndroidBridge = window.AndroidBridge || null;
-
+  /* ========== SHIZUKU ========== */
   function setShizukuStatus(kind) {
     shizukuStatus.classList.remove('connected', 'not-connected', 'not-installed');
     const textNode = shizukuStatus.lastChild;
@@ -704,6 +777,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     } else { toast('Buka aplikasi Shizuku & izinkan HYR'); hideDialog(); }
   });
 
+  /* ========== LINK & GAME ========== */
   btnChannel.addEventListener('click', () => {
     if (AndroidBridge && typeof AndroidBridge.openUrl === 'function') {
       try { AndroidBridge.openUrl(CHANNEL_URL); return; } catch (_) {}
@@ -720,23 +794,45 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     });
   });
 
-  document.querySelectorAll('.game-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const pkg = card.dataset.game;
-      if (AndroidBridge && typeof AndroidBridge.launchApp === 'function') {
-        try {
-          const ok = AndroidBridge.launchApp(pkg);
-          if (!ok) toast('GAME TIDAK TERPASANG', 'error');
-        } catch (_) { toast('GAME TIDAK TERPASANG', 'error'); }
-      } else {
+  const btnFFMax = document.getElementById('btn-launch-ffmax');
+  const ffmaxStatus = document.getElementById('ffmax-status');
+  if (btnFFMax) {
+    btnFFMax.addEventListener('click', () => {
+      if (!AndroidBridge || typeof AndroidBridge.launchFFMax !== 'function') {
         toast('Buka lewat APK Android');
+        return;
+      }
+      btnFFMax.classList.add('active');
+      ffmaxStatus.textContent = 'LAUNCHING...';
+      try {
+        const result = AndroidBridge.launchFFMax();
+        if (result === 'SHIZUKU_OK' || result === 'INTENT_OK') {
+          ffmaxStatus.textContent = 'OPENING...';
+          toast('FREE FIRE MAX DIBUKA', 'success');
+          setTimeout(() => { ffmaxStatus.textContent = 'TAP TO OPEN'; btnFFMax.classList.remove('active'); }, 3000);
+        } else if (result === 'NOT_INSTALLED') {
+          ffmaxStatus.textContent = 'NOT INSTALLED';
+          toast('FREE FIRE MAX TIDAK TERPASANG', 'error');
+          setTimeout(() => { ffmaxStatus.textContent = 'TAP TO OPEN'; btnFFMax.classList.remove('active'); }, 2500);
+        } else {
+          ffmaxStatus.textContent = 'FAILED';
+          toast('GAGAL MEMBUKA GAME', 'error');
+          setTimeout(() => { ffmaxStatus.textContent = 'TAP TO OPEN'; btnFFMax.classList.remove('active'); }, 2500);
+        }
+      } catch (_) {
+        ffmaxStatus.textContent = 'TAP TO OPEN';
+        btnFFMax.classList.remove('active');
+        toast('GAGAL MEMBUKA GAME', 'error');
       }
     });
-  });
+  }
 
   btnLogout.addEventListener('click', async () => {
     try { await fetch(API_BASE + '/api/auth/logout', { method: 'POST', credentials: 'include' }); } catch (_) {}
     clearSession();
+    if (AndroidBridge && typeof AndroidBridge.updateFloatingWindow === 'function') {
+      try { AndroidBridge.updateFloatingWindow(''); } catch (_) {}
+    }
     resetAllToggles();
     hideDialog();
     userNameEl.textContent = '—';
